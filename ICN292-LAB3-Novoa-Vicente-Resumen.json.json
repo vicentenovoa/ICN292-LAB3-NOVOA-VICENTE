@@ -1,0 +1,221 @@
+{
+  "name": "ICN292-LAB3-Resumen",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "773fb0ce-6730-427b-93b8-50535f988893",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1y47IxdZWIiIB6tlKBoH-8_36tdzfik2ePG1CE29nft8",
+          "mode": "list",
+          "cachedResultName": "Registro-Devoluciones-VicenteNovoa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y47IxdZWIiIB6tlKBoH-8_36tdzfik2ePG1CE29nft8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Solicitudes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y47IxdZWIiIB6tlKBoH-8_36tdzfik2ePG1CE29nft8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        192,
+        0
+      ],
+      "id": "b73557cd-27f6-4266-b7b7-c19106a9d552",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L7qXVtrNe3yaIHRe",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Monto"
+            },
+            {
+              "field": "Id_Solicitud"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Ruta",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "59c08bab-1548-46f9-9960-3d71c962e5a1",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1y47IxdZWIiIB6tlKBoH-8_36tdzfik2ePG1CE29nft8",
+          "mode": "list",
+          "cachedResultName": "Registro-Devoluciones-VicenteNovoa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y47IxdZWIiIB6tlKBoH-8_36tdzfik2ePG1CE29nft8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 257392517,
+          "mode": "list",
+          "cachedResultName": "Catalogo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1y47IxdZWIiIB6tlKBoH-8_36tdzfik2ePG1CE29nft8/edit#gid=257392517"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Ruta": "={{ $json.ruta }}",
+            "Numero de solicitudes": "={{ $json.Count_Id_Solicitud}}",
+            "Monto Total": "={{ $json.Sum_Monto }}",
+            "Fecha": "={{ $now.toFormat('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [
+            "solicitud "
+          ],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Numero de solicitudes",
+              "displayName": "Numero de solicitudes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Monto Total",
+              "displayName": "Monto Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ruta",
+              "displayName": "Ruta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        512,
+        0
+      ],
+      "id": "1703b53b-58d6-49a0-bc4a-8744e0e5bce1",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L7qXVtrNe3yaIHRe",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "53320b25-b7d4-40e4-8931-ffe38a4788ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eb045d845a7d856dcd3b46c10d7992be5c70b34058c6f5d10a0ac6a668779e48"
+  },
+  "nodeGroups": [],
+  "id": "1lbvxpwi0zU0Jzal",
+  "tags": []
+}
